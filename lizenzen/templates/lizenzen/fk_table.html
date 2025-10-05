@@ -1,0 +1,63 @@
+{% extends "lizenzen/base.html" %}
+{% load custom_tags %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+
+<div class="content-wrapper">
+  <table id="fk-table">
+    <thead>
+      <tr>
+        {% for field in fields %}
+          <th>{{ field|capfirst }}</th>
+        {% endfor %}
+        <th>Aktionen</th>
+      </tr>
+
+      <tr class="filter">
+        {% for _ in fields %}
+          <td><input type="text" placeholder="Filter…"></td>
+        {% endfor %}
+        <td></td>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for obj in objects %}
+      <tr data-id="{{ obj.id }}">
+        {% for field in fields %}
+          <td>
+            <span class="display">{{ obj|getattr_value:field }}</span>
+            <input class="edit"
+                   type="text"
+                   name="{{ field }}"
+                   value="{{ obj|getattr_value:field }}"
+                   style="display:none;">
+          </td>
+        {% endfor %}
+        <td>
+          <span class="action-buttons">
+            <button class="icon-btn edit-btn">✏️</button>
+            <button class="icon-btn save-btn" style="display:none;">💾</button>
+            <button class="icon-btn cancel-btn" style="display:none;">❌</button>
+            <button class="icon-btn delete-btn">🗑️</button>
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Löschen bestätigen</div>
+    <div>Soll dieser Datensatz wirklich gelöscht werden?</div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('deleteModal')">❌ Abbrechen</button>
+      <button id="confirmDeleteBtn">💾 Löschen</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

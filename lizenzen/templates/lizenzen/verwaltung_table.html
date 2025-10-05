@@ -1,0 +1,229 @@
+{% extends "lizenzen/base.html" %}
+{% block title %}Lizenzverwaltung{% endblock %}
+{% block content %}
+
+<div class="content-wrapper">
+  <table id="verwaltung-table" data-baseurl="verwaltung">
+    <thead>
+      <tr>
+        <th>Lizenznehmer</th>
+        <th>Schuleinheit</th>
+        <th>Software</th>
+        <th>Kostentyp</th>
+        <th>Lizenz-Start</th>
+        <th>Lizenz-Ende</th>
+        <th>Schulklasse</th>
+        <th>Anzahl Schüler</th>
+        <th>Anzahl weitere Lizenzen</th>
+        <th>Aktionen</th>
+      </tr>
+      <tr class="filter">
+        {% for _ in "123456789" %}
+          <td><input type="text" placeholder="Filter…"></td>
+        {% endfor %}
+        <td style="text-align:right;">
+          <button class="icon-btn plus" onclick="openModal('createVerwaltungModal')" title="Neue Verwaltung anlegen">+</button>
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in verwaltungen %}
+      <tr data-id="{{ v.id }}">
+        <td>
+          <span class="display">{{ v.lizenznehmer.name }}</span>
+          <select class="edit" name="lizenznehmer" style="display:none;">
+            {% for ln in lizenznehmer %}
+              <option value="{{ ln.id }}" {% if v.lizenznehmer.id == ln.id %}selected{% endif %}>{{ ln.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <span class="display">{{ v.lizenznehmer.schuleinheit.bezeichnung }}</span>
+          <input class="edit" type="text" value="{{ v.lizenznehmer.schuleinheit.bezeichnung }}" readonly style="display:none;">
+        </td>
+        <td>
+          <span class="display">{{ v.software.name }}</span>
+          <select class="edit" name="software" style="display:none;">
+            {% for s in software_list %}
+              <option value="{{ s.id }}" {% if v.software.id == s.id %}selected{% endif %}>{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <span class="display">{{ v.kostentyp.bezeichnung }}</span>
+          <select class="edit" name="kostentyp" style="display:none;">
+            {% for k in kostentypen %}
+              <option value="{{ k.id }}" {% if v.kostentyp.id == k.id %}selected{% endif %}>{{ k.bezeichnung }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <span class="display">{{ v.lizenz_start|date:"d.m.Y" }}</span>
+          <input class="edit" type="date" name="lizenz_start" value="{{ v.lizenz_start|date:'Y-m-d' }}" style="display:none;">
+        </td>
+        <td>
+          <span class="display">{{ v.lizenz_ende|date:"d.m.Y" }}</span>
+          <input class="edit" type="date" name="lizenz_ende" value="{{ v.lizenz_ende|date:'Y-m-d' }}" style="display:none;">
+        </td>
+        <td>
+          <span class="display">{{ v.schulklasse.name }}</span>
+          <select class="edit" name="schulklasse" style="display:none;">
+            {% for sk in schulklassen %}
+              <option value="{{ sk.id }}" {% if v.schulklasse and v.schulklasse.id == sk.id %}selected{% endif %}>{{ sk.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <span class="display">{{ v.schulklasse.anzahl_schueler|default:"–" }}</span>
+          <input class="edit" type="text" value="{{ v.schulklasse.anzahl_schueler|default:'–' }}" readonly style="display:none; width:4ch;">
+        </td>
+        <td>
+          <span class="display">{{ v.anzahl_weitere_lizenzen }}</span>
+          <input class="edit" type="number" name="anzahl_weitere_lizenzen" value="{{ v.anzahl_weitere_lizenzen }}" style="display:none; width:4ch;">
+        </td>
+        <td>
+          <span class="action-buttons">
+            <button class="icon-btn edit-btn">✏️</button>
+            <button class="icon-btn save-btn" style="display:none;">💾</button>
+            <button class="icon-btn cancel-btn" style="display:none;">❌</button>
+            <button class="icon-btn delete-btn">🗑️</button>
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Löschen bestätigen</div>
+    <div>Soll dieser Datensatz wirklich gelöscht werden?</div>
+    <div class="modal-footer">
+      <button type="button" onclick="closeModal('deleteModal')">❌ Abbrechen</button>
+      <button id="confirmDeleteBtn">💾 Löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Verwaltung Modal -->
+<div id="createVerwaltungModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neue Verwaltung</div>
+    <form id="createVerwaltungForm" class="create-form" method="post" action="{% url 'verwaltung_create' %}">
+      {% csrf_token %}
+
+      <p>
+        <label for="id_lizenznehmer">Lizenznehmer</label>
+        {{ form.lizenznehmer }}
+        <button type="button" class="icon-btn plus" onclick="openModal('createLizenznehmerModal')">+</button>
+      </p>
+      <p>
+        <label for="id_software">Software</label>
+        {{ form.software }}
+        <button type="button" class="icon-btn plus" onclick="openModal('createSoftwareModal')">+</button>
+      </p>
+      <p>
+        <label for="id_kostentyp">Kostentyp</label>
+        {{ form.kostentyp }}
+        <button type="button" class="icon-btn plus" onclick="openModal('createKostentypModal')">+</button>
+      </p>
+      <p>
+        <label for="id_schulklasse">Schulklasse</label>
+        {{ form.schulklasse }}
+        <button type="button" class="icon-btn plus" onclick="openModal('createSchulklasseModal')">+</button>
+      </p>
+      <p>
+        <label for="id_lizenz_start">Startdatum</label>
+        <input type="date" name="lizenz_start" value="{{ today|date:'Y-m-d' }}">
+      </p>
+      <p>
+        <label for="id_lizenz_ende">Enddatum</label>
+        <input type="date" name="lizenz_ende" value="{{ default_end|date:'Y-m-d' }}">
+      </p>
+      <p>
+        <label for="id_anzahl_weitere_lizenzen">Weitere Lizenzen</label>
+        <input type="number" name="anzahl_weitere_lizenzen" maxlength="4" style="width:4ch;">
+      </p>
+
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createVerwaltungModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Create FK Modals -->
+<div id="createLizenznehmerModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neuer Lizenznehmer</div>
+    <form class="create-form" method="post" action="{% url 'lizenznehmer_create' %}">
+      {% csrf_token %}
+      {{ lizenznehmer_form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createLizenznehmerModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="createSoftwareModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neue Software</div>
+    <form class="create-form" method="post" action="{% url 'software_create' %}">
+      {% csrf_token %}
+      {{ software_form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createSoftwareModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="createKostentypModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neuer Kostentyp</div>
+    <form class="create-form" method="post" action="{% url 'kostentyp_create' %}">
+      {% csrf_token %}
+      {{ kostentyp_form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createKostentypModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="createSchuleinheitModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neue Schuleinheit</div>
+    <form class="create-form" method="post" action="{% url 'schuleinheit_create' %}">
+      {% csrf_token %}
+      {{ schuleinheit_form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createSchuleinheitModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="createSchulklasseModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Neue Schulklasse</div>
+    <form class="create-form" method="post" action="{% url 'schulklasse_create' %}">
+      {% csrf_token %}
+      {{ schulklasse_form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createSchulklasseModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
