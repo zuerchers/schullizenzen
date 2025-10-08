@@ -3,12 +3,14 @@ Django settings for schul_lizenzen project.
 """
 
 from pathlib import Path
+import os
 
-# Basisverzeichnis des Projekts
+# === Basisverzeichnis des Projekts ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# === Sicherheit ===
 SECRET_KEY = "django-insecure-ersetze-diesen-string-durch-einen-geheimen"
-DEBUG = True   # Lokale Entwicklung
+DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -16,11 +18,11 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
 ]
 
-# Für Dev sicherstellen, dass Cookies auch über HTTP gesetzt werden:
+# Cookies im Dev-Modus nicht sichern (weil kein HTTPS)
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 
-# Installierte Apps
+# === Installierte Apps ===
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -28,10 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "lizenzen",  # deine App
-    "widget_tweaks",
+    "lizenzen",       # deine App
+    "widget_tweaks",  # für Formulare
 ]
 
+# === Middleware ===
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -44,10 +47,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "schul_lizenzen.urls"
 
+# === Templates ===
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # globaler Template-Ordner
+        # Globaler Template-Ordner (optional, zusätzlich zu App-Templates)
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -62,7 +67,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "schul_lizenzen.wsgi.application"
 
-# Datenbank – aktuell MySQL (wie wir konfiguriert haben)
+# === Datenbank (MySQL) ===
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -77,7 +82,7 @@ DATABASES = {
     }
 }
 
-# Passwortvalidierung
+# === Passwortvalidierung ===
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -85,15 +90,26 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Sprache und Zeitzone
+# === Sprache & Zeitzone ===
 LANGUAGE_CODE = "de-ch"
 TIME_ZONE = "Europe/Zurich"
 USE_I18N = True
 USE_TZ = True
 
-# Statische Dateien (CSS, JS, Bilder)
+# === Statische Dateien (CSS, JS, Bilder) ===
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# Standard Primärschlüsseltyp
+# Django sucht hier nach statischen Dateien (in dieser Reihenfolge)
+STATICFILES_DIRS = [
+    BASE_DIR / "lizenzen" / "static",  # App-spezifischer Ordner
+]
+
+# === Standard Primärschlüsseltyp ===
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# === Optional: Debug-Ausgabe der Static-Ordner ===
+if DEBUG:
+    print("\n--- STATICFILES_DIRS ---")
+    for path in STATICFILES_DIRS:
+        print("  ", path)
+    print("------------------------\n")

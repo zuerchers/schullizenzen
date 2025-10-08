@@ -1,41 +1,37 @@
+<!DOCTYPE html>
 {% load static %}
-<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}Schul-Lizenzen{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Schullizenzen{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'css/styles_base.css' %}">
+  {% block extra_css %}{% endblock %}
+  <script src="{% static 'js/verwaltung.js' %}" defer></script>
+  <link rel="icon" type="image/png" href="{% static 'favicon.png' %}">
+  <meta name="theme-color" content="#243447">
 </head>
 <body>
-<header class="site-header">
-  <div class="brand">Lizenzverwaltung</div>
-  <nav class="main-nav">
-    <a href="{% url 'verwaltung_table' %}"
-       class="{% if request.resolver_match.url_name == 'verwaltung_table' %}active{% endif %}">
-       Verwaltung</a>
-    <a href="{% url 'lizenznehmer_list' %}"
-       class="{% if request.resolver_match.url_name == 'lizenznehmer_list' %}active{% endif %}">
-       Lizenznehmer</a>
-    <a href="{% url 'software_list' %}"
-       class="{% if request.resolver_match.url_name == 'software_list' %}active{% endif %}">
-       Software</a>
-    <a href="{% url 'kostentyp_list' %}"
-       class="{% if request.resolver_match.url_name == 'kostentyp_list' %}active{% endif %}">
-       Kostentyp</a>
-    <a href="{% url 'schuleinheit_list' %}"
-       class="{% if request.resolver_match.url_name == 'schuleinheit_list' %}active{% endif %}">
-       Schuleinheit</a>
-    <a href="{% url 'schulklasse_list' %}"
-       class="{% if request.resolver_match.url_name == 'schulklasse_list' %}active{% endif %}">
-       Schulklasse</a>
-  </nav>
-</header>
 
-<main class="container">
-  {% block content %}{% endblock %}
-</main>
+  <header class="main-header">
+    <h1>Schullizenzen</h1>
+    <nav>
+      <a href="{% url 'verwaltung_table' %}" class="{% if request.path == '/' or '/verwaltung/' in request.path %}active{% endif %}">Verwaltung</a>
+      <a href="{% url 'lizenznehmer_list' %}" class="{% if '/lizenznehmer/' in request.path %}active{% endif %}">Lizenznehmer</a>
+      <a href="{% url 'software_list' %}" class="{% if '/software/' in request.path %}active{% endif %}">Software</a>
+      <a href="{% url 'kostentyp_list' %}" class="{% if '/kostentyp/' in request.path %}active{% endif %}">Kostentypen</a>
+      <a href="{% url 'schuleinheit_list' %}" class="{% if '/schuleinheit/' in request.path %}active{% endif %}">Schuleinheiten</a>
+      <a href="{% url 'schulklasse_list' %}" class="{% if '/schulklasse/' in request.path %}active{% endif %}">Schulklassen</a>
+    </nav>
+  </header>
 
-<script src="{% static 'js/verwaltung.js' %}"></script>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="toast"></div>
+
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

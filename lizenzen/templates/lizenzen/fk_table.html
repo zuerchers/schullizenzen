@@ -1,46 +1,70 @@
 {% extends "lizenzen/base.html" %}
-{% load custom_tags %}
-{% block title %}{{ title }}{% endblock %}
-{% block content %}
+{% load static custom_tags %}
 
-<div class="content-wrapper">
-  <table id="fk-table">
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/styles_base.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper fk-table">
+
+  <!-- Toolbar -->
+  <div class="table-toolbar">
+    <!-- + Button -->
+    <button class="icon-btn plus" onclick="openModal('createModal')" title="Neuen Eintrag hinzufügen">+</button>
+
+    <!-- XLSX Export -->
+    <a href="{% url model_name|add:'_export_xlsx' %}" class="icon-btn export-btn excel" title="Export als Excel">
+      <img src="{% static 'icons/excel.svg' %}" alt="Excel" class="icon"> XLSX
+    </a>
+
+    <!-- PDF Export -->
+    <a href="{% url model_name|add:'_export_pdf' %}" class="icon-btn export-btn pdf" title="Export als PDF">
+      <img src="{% static 'icons/pdf.svg' %}" alt="PDF" class="icon"> PDF
+    </a>
+  </div>
+
+  <!-- Tabelle -->
+  <table id="fk-table" data-baseurl="{{ model_name }}">
     <thead>
       <tr>
-        {% for field in fields %}
-          <th>{{ field|capfirst }}</th>
+        {% for h in headers %}
+          <th>{{ h }}</th>
         {% endfor %}
-        <th>Aktionen</th>
+        <th class="actions"></th>
       </tr>
-
       <tr class="filter">
-        {% for _ in fields %}
+        {% for _ in headers %}
           <td><input type="text" placeholder="Filter…"></td>
         {% endfor %}
         <td></td>
       </tr>
     </thead>
-
     <tbody>
       {% for obj in objects %}
       <tr data-id="{{ obj.id }}">
-        {% for field in fields %}
+        {% for f in fields %}
           <td>
-            <span class="display">{{ obj|getattr_value:field }}</span>
-            <input class="edit"
-                   type="text"
-                   name="{{ field }}"
-                   value="{{ obj|getattr_value:field }}"
-                   style="display:none;">
+            {% if f == "schuleinheit" %}
+              <span class="display">{{ obj.schuleinheit.bezeichnung|default:"–" }}</span>
+              <select class="edit" name="schuleinheit" style="display:none;">
+                {% for se in schuleinheiten %}
+                  <option value="{{ se.id }}" {% if obj.schuleinheit.id == se.id %}selected{% endif %}>{{ se.bezeichnung }}</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <span class="display">{{ obj|getattr_value:f|default:"–" }}</span>
+              <input class="edit" type="text" name="{{ f }}" value="{{ obj|getattr_value:f }}" style="display:none;">
+            {% endif %}
           </td>
         {% endfor %}
-        <td>
-          <span class="action-buttons">
-            <button class="icon-btn edit-btn">✏️</button>
-            <button class="icon-btn save-btn" style="display:none;">💾</button>
-            <button class="icon-btn cancel-btn" style="display:none;">❌</button>
-            <button class="icon-btn delete-btn">🗑️</button>
-          </span>
+        <td class="actions">
+          <button class="icon-btn edit-btn">✏️</button>
+          <button class="icon-btn save-btn" style="display:none;">💾</button>
+          <button class="icon-btn cancel-btn" style="display:none;">❌</button>
+          <button class="icon-btn delete-btn">🗑️</button>
         </td>
       </tr>
       {% endfor %}
@@ -48,16 +72,18 @@
   </table>
 </div>
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="modal">
+<!-- Modal: Neuer Eintrag -->
+<div id="createModal" class="modal">
   <div class="modal-content">
-    <div class="modal-header">Löschen bestätigen</div>
-    <div>Soll dieser Datensatz wirklich gelöscht werden?</div>
-    <div class="modal-footer">
-      <button type="button" onclick="closeModal('deleteModal')">❌ Abbrechen</button>
-      <button id="confirmDeleteBtn">💾 Löschen</button>
-    </div>
+    <div class="modal-header">Neuer {{ title }}</div>
+    <form class="create-form" method="post" action="{% url create_url %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('createModal')">❌ Abbrechen</button>
+        <button type="submit">💾 Speichern</button>
+      </div>
+    </form>
   </div>
 </div>
-
 {% endblock %}

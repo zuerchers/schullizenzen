@@ -1,0 +1,109 @@
+/* ===== Spezifisches Styling für die Verwaltungstabelle ===== */
+
+/* Kompaktere Zeilen */
+#verwaltung-table th,
+#verwaltung-table td {
+  padding: 3px 6px;
+  line-height: 1.2;
+}
+
+/* Kopfzeilen minimal kleiner, zweizeilig möglich */
+#verwaltung-table thead th {
+  font-size: 0.83rem;
+  font-weight: 600;
+  white-space: normal;
+  text-align: left;
+}
+
+/* Spaltenbreiten */
+#verwaltung-table th:nth-child(2), /* Schuleinheit */
+#verwaltung-table td:nth-child(2) {
+  width: 12%;
+}
+#verwaltung-table th:nth-child(4), /* Kostentyp */
+#verwaltung-table td:nth-child(4) {
+  width: 10%;
+}
+#verwaltung-table th:nth-child(5),
+#verwaltung-table th:nth-child(6),
+#verwaltung-table td:nth-child(5),
+#verwaltung-table td:nth-child(6) {
+  width: 9%;
+}
+#verwaltung-table th:last-child,
+#verwaltung-table td:last-child {
+  width: 9%;
+  text-align: center;
+}
+
+/* Inline-Edit: gleiche Schrift wie Tabelleninhalt */
+#verwaltung-table input[type="date"],
+#verwaltung-table input[type="number"],
+#verwaltung-table select {
+  font-size: 0.85rem;
+  height: 1.3rem;
+  line-height: 1.3rem;
+}
+
+/* Buttons in Aktionenspalte */
+#verwaltung-table .icon-btn {
+  margin: 0 1px;
+  padding: 1px 3px;
+}
+#verwaltung-table .icon-btn.edit-btn { color: #243447; }
+#verwaltung-table .icon-btn.save-btn { color: #217346; }
+#verwaltung-table .icon-btn.cancel-btn { color: #b70d0d; }
+#verwaltung-table .icon-btn.delete-btn { color: #b70d0d; }
+
+/* Plus-Button oben rechts */
+#verwaltung-table th:last-child {
+  text-align: right;
+  vertical-align: middle;
+}
+#verwaltung-table th:last-child .icon-btn.plus {
+  margin-right: 2px;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+}
+
+/* Tabellenkörper kompakter */
+#verwaltung-table tbody tr td {
+  height: 1.5rem;
+}
+
+/* Modal-Fix: zentrierte Darstellung */
+.modal-content.form-right {
+  margin: 6% auto;
+  max-width: 520px;
+}
+
+/* Formular-Tabelle in Verwaltung */
+.form-table td {
+  padding: 3px 6px;
+  vertical-align: middle;
+}
+.form-table td:first-child {
+  text-align: right;
+  color: #444;
+  width: 45%;
+}
+.form-table input,
+.form-table select {
+  width: 100%;
+  height: 1.4rem;
+  font-size: 0.85rem;
+}
+
+/* Toast länger sichtbar (2 Sekunden) */
+.toast.show,
+#toast.show {
+  bottom: 60px;
+  opacity: 1;
+  transition: opacity 0.3s ease, bottom 0.3s ease;
+  animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+  0%, 80% { opacity: 1; }
+  100% { opacity: 0; bottom: 40px; }
+}

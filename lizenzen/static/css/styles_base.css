@@ -1,0 +1,264 @@
+/* ===========================
+   Farb- und Layout-Variablen
+   =========================== */
+:root{
+  --blue:#243447;
+  --blue-2:#1e2c3b;
+  --yellow:#f1c40f;
+  --bg:#f7f9fc;
+  --text:#333;
+  --border:#cccccc;
+  --excel:#217346;
+  --pdf:#c0392b;
+}
+
+/* ========== Grundlayout ========== */
+html,body{margin:0;padding:0}
+body{
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.35;
+}
+
+a{ color: inherit; text-decoration: none; }
+
+/* ========== Header / Navigation ========== */
+.main-header{
+  background: var(--blue);
+  color:#fff;
+  padding:.8rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+}
+.main-header h1{
+  margin:0;
+  font-size:1.3rem;
+  font-weight:700;
+}
+.main-header nav{
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+}
+.main-header nav a{
+  color:#fff;
+  padding:.25rem .6rem;
+  border-radius:6px;
+}
+.main-header nav a:hover{
+  background: rgba(255,255,255,.15);
+}
+.main-header nav a.active{
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight:700;
+}
+
+/* ========== Inhaltsbereich ========== */
+.content-wrapper{
+  padding: .8rem 1rem 1.2rem;
+}
+
+/* ========== Toolbar (Export + +) ========== */
+.table-toolbar,
+.table-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:.45rem;
+  margin:.4rem 0 .3rem;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:.3rem .6rem;
+}
+
+/* ========== Buttons / Icons ========== */
+.icon-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:.9rem;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  gap:.25rem;
+}
+.icon-btn.plus{
+  background: var(--yellow);
+  color: var(--blue);
+  font-weight:700;
+  border-radius:4px;
+  padding:2px 6px;
+}
+.icon-btn.plus:hover{ background:#d4ac0d; }
+
+.icon-btn.export-btn{
+  background: var(--blue);
+  color:#fff;
+  border-radius:4px;
+  padding:3px 8px;
+  font-size:.8rem;
+}
+.icon-btn.export-btn:hover{
+  background: var(--yellow);
+  color: var(--blue);
+}
+.icon{ width:16px; height:16px; display:inline-block; }
+
+/* --- farbige Varianten für Export --- */
+.export-btn.excel{
+  background: var(--excel);
+  color:#fff;
+  border-radius:4px;
+  padding:2px 6px;
+}
+.export-btn.pdf{
+  background: var(--pdf);
+  color:#fff;
+  border-radius:4px;
+  padding:2px 6px;
+}
+.export-btn.excel:hover{
+  background:#1a5a36;
+}
+.export-btn.pdf:hover{
+  background:#9c2e23;
+}
+
+/* ========== Tabellen ========== */
+table{
+  width:100%;
+  border-collapse: collapse;
+  font-size:.85rem;
+  margin-top:.6rem;
+  background:#fff;
+}
+th,td{
+  border:1px solid var(--border);
+  padding:3px 6px;
+  vertical-align:middle;
+  text-align:left;
+  white-space:nowrap;
+  line-height:1.3;
+  height:1.8rem;
+}
+
+/* Kopfzeile */
+thead th{
+  background: var(--blue);
+  color:#fff;
+  font-weight:600;
+  font-size:.85rem;
+  line-height:1.3;
+  height:1.8rem;
+}
+
+/* Zebra-Zeilen */
+tbody tr:nth-child(even){ background:#f2f6fb; }
+
+/* Filterzeile */
+.filter input{
+  width:95%;
+  font-size:.75rem;
+  padding:1px 3px;
+  height:1.4rem;
+  border:1px solid #bbb;
+  border-radius:3px;
+}
+
+/* Aktionen-Spalte minimal */
+th.actions, td.actions {
+  width:1%;
+  white-space:nowrap;
+  text-align:center;
+  padding:2px 4px;
+}
+th.actions::after {
+  content:"";
+}
+td.actions .icon-btn {
+  font-size:0.85rem;
+  padding:0;
+  margin:0 1px;
+}
+
+/* Inline Inputs kompakt */
+input[type="date"],
+input[type="number"],
+select,
+input[type="text"]{
+  font-size:.85rem;
+  font-family:inherit;
+  padding:2px 4px;
+  height:1.4rem;
+  border:1px solid #bbb;
+  border-radius:3px;
+  background:#fff;
+}
+.small-input{ height:1.4rem; }
+
+/* ========== Modals ========== */
+.modal{
+  display:none !important;
+  position:fixed;
+  z-index:1000;
+  inset:0;
+  background:rgba(0,0,0,.4);
+}
+.modal[style*="display: block"]{ display:block !important; }
+
+.modal-content{
+  background:#fff;
+  border-radius:6px;
+  padding:1rem;
+  max-width:560px;
+  margin:8% auto;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+.modal-header{
+  font-weight:700;
+  margin-bottom:.6rem;
+}
+.modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:.5rem;
+  margin-top:.8rem;
+}
+
+/* Formular-Tabelle */
+.form-table{ width:100%; border-collapse:separate; border-spacing:0 .35rem; }
+.form-table td:first-child{ color:#444; padding-right:.6rem; text-align:right; }
+.form-right .form-table input,
+.form-right .form-table select{ width:100%; }
+
+/* Toast */
+#toast, .toast{
+  visibility:hidden;
+  min-width:200px;
+  background:rgba(50,50,50,.9);
+  color:#fff;
+  text-align:center;
+  border-radius:6px;
+  padding:8px 14px;
+  position:fixed;
+  z-index:2000;
+  left:50%;
+  bottom:40px;
+  transform:translateX(-50%);
+  opacity:0;
+  transition:opacity .25s ease,bottom .25s ease;
+  font-size:.9rem;
+}
+#toast.show, .toast.show{
+  visibility:visible;
+  opacity:1;
+  bottom:60px;
+}
+
+/* Utility */
+.hide{display:none!important;}
+.nowrap{white-space:nowrap;}
+.right{text-align:right;}
